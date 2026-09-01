@@ -1,12 +1,12 @@
 """Tests for golf_bracket.pairing."""
 from golf_bracket.player import Player
-from golf_bracket.pairing import make_pairing
+from golf_bracket.pairing import fold_pair
 from golf_bracket.pairing import bucket_by_record
 
 def test_first_pairing():
     Players = [Player(name=f"Player{i}", seed=i) for i in range(1, 21)]
     
-    first_pairing = make_pairing(Players, 1)
+    first_pairing = fold_pair(Players)
 
     assert len(first_pairing) == 10
     assert first_pairing[0][0].seed == 1

@@ -1,6 +1,6 @@
 """Tournament orchestration: rounds, elimination, result recording, overall state."""
 from golf_bracket.player import Player
-from golf_bracket.pairing import make_pairing
+from golf_bracket.pairing import fold_pair
 from dataclasses import dataclass, field
 
 @dataclass

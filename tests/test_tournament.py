@@ -1,6 +1,6 @@
 """Tests for golf_bracket.tournament."""
 from golf_bracket.player import Player
-from golf_bracket.pairing import make_pairing
+
 
 from golf_bracket.tournament import Tournament
 
