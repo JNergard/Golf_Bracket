@@ -2,6 +2,8 @@
 from golf_bracket.player import Player
 
 def make_pairing(players: list[Player], round_num: int) -> list[tuple[Player, Player]]:
+    """Make pairings for a round in the tournament by splitting players into two halves 
+    and pairing the top half with the bottom half in reverse order."""
     sorted_players = sorted(players, key=lambda player: player.seed)
 
     half_len_list = len(sorted_players)//2
