@@ -22,9 +22,23 @@ def fold_pair(players: list[Player]) -> list[tuple[Player, Player]]:
     second_half = sorted_players[half_len_list:]
     second_half_reversed = second_half[::-1]
 
-    pairings = list(zip(first_half, second_half_reversed))
+    pairings = resolve_rematches(first_half, second_half_reversed)
+
 
     return pairings
+
+def resolve_rematches(first_half: list[Player], second_half: list[Player]) -> list[tuple[Player, Player]]:
+    second_half = list(second_half)  
+
+    for i in range(len(first_half)):
+        if second_half[i] in first_half[i].opponents:
+            for j in range(i+1, len(second_half)):
+                if second_half[j] not in first_half[i].opponents:
+                    second_half[i], second_half[j] = second_half[j], second_half[i]
+                    break
+
+    return list(zip(first_half, second_half))
+
 
 def round_pairings(players: list[Player]) -> list[tuple[Player, Player]]:
     pairings = []

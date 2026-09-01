@@ -3,6 +3,7 @@ from golf_bracket.player import Player
 from golf_bracket.pairing import fold_pair
 from golf_bracket.pairing import bucket_by_record
 from golf_bracket.pairing import round_pairings
+from golf_bracket.pairing import resolve_rematches
 
 def test_first_pairing():
     Players = [Player(name=f"Player{i}", seed=i) for i in range(1, 21)]
@@ -37,3 +38,20 @@ def test_round_pairings():
     assert len(pairings) == 2
     assert (Player1, Player2) in pairings
     assert (Player3, Player4) in pairings
+
+def test_resolve_rematches():
+    A = Player(name="A", seed = 1)
+    B = Player(name="B", seed = 2)
+    C = Player(name="C", seed = 3) 
+    D = Player(name="D", seed = 4)
+
+    A.add_opponent(D)
+    D.add_opponent(A)
+
+    first_half = [A, B]
+    second_half_reversed = [D, C]
+
+    pairings = resolve_rematches(first_half, second_half_reversed)
+
+    assert (A, C) in pairings
+    assert (B, D) in pairings
