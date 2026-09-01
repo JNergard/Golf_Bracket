@@ -2,6 +2,7 @@
 from golf_bracket.player import Player
 
 
+
 def test_player1():
     Player1 = Player(name="Player1", seed=10)
     assert Player1.wins == 0
@@ -34,3 +35,4 @@ def test_player1_elim():
 
     assert Player1.losses == 2
     assert Player1.eliminated is True
+
