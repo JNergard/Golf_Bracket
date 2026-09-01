@@ -1,5 +1,6 @@
 """Round pairing logic: bucketing by record, fold pairing, rematch avoidance, pairing-down."""
 from golf_bracket.player import Player
+from collections import defaultdict
 
 def make_pairing(players: list[Player], round_num: int) -> list[tuple[Player, Player]]:
     """Make pairings for a round in the tournament by splitting players into two halves 
@@ -13,4 +14,11 @@ def make_pairing(players: list[Player], round_num: int) -> list[tuple[Player, Pl
 
     pairings = list(zip(first_half, second_half_reversed))
     return pairings
-        
+
+def bucket_by_record(players: list[Player]) -> dict[tuple[int, int], list[Player]]:
+    buckets = defaultdict(list)
+    for player in players:
+        key = (player.wins, player.losses)
+        buckets[key].append(player)
+
+    return buckets
