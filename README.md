@@ -16,7 +16,11 @@ A Swiss-style, 2-loss-cutoff match play tournament tracker for a 20-person golf 
   are played everyone's Buchholz is 0, which is why round 1 falls back to
   pure seed order automatically — same rule, no special case needed.
 - Uneven buckets are handled by "pairing down": the odd player out drops to
-  the top of the next bucket instead of getting an automatic win.
+  the top of the next bucket instead of getting an automatic win. Resistance
+  is the planned tiebreaker for deciding who that odd player out is (and
+  who gets a bye, if the whole round ends up with an odd number of alive
+  players) — lowest resistance in the bucket drops down first, since they've
+  had the easiest schedule so far.
 
 ## Project layout
 

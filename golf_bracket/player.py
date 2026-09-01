@@ -23,3 +23,7 @@ class Player:
     @property
     def eliminated(self) -> bool:
         return self.losses > 1
+
+    @property
+    def resistance(self) -> int:
+        return sum(opponent.wins for opponent in self.opponents)
