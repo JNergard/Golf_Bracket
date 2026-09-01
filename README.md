@@ -15,12 +15,16 @@ A Swiss-style, 2-loss-cutoff match play tournament tracker for a 20-person golf 
   with initial seed as the tiebreak when Buchholz is equal. Before any games
   are played everyone's Buchholz is 0, which is why round 1 falls back to
   pure seed order automatically — same rule, no special case needed.
-- Uneven buckets are handled by "pairing down": the odd player out drops to
-  the top of the next bucket instead of getting an automatic win. Resistance
-  is the planned tiebreaker for deciding who that odd player out is (and
-  who gets a bye, if the whole round ends up with an odd number of alive
-  players) — lowest resistance in the bucket drops down first, since they've
-  had the easiest schedule so far.
+- Uneven buckets are handled by "pairing down": if a bucket can't pair
+  internally (e.g. only 1 player), the excess flows *up* into the next
+  bucket above, pulling out that bucket's weakest-ranked player (lowest
+  resistance, seed as tiebreak) to face the orphaned player instead. This
+  can cascade upward through multiple buckets. The bye, when the total
+  number of alive players is odd, always lands on the single best-ranked
+  player overall (highest resistance/seed) once the cascade resolves —
+  the best player never has to play down a bucket, they just sit out.
+  Not yet implemented (planned for Milestone 7); `pair_round` currently
+  assumes every bucket has an even number of players.
 
 ## Project layout
 

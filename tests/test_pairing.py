@@ -2,6 +2,7 @@
 from golf_bracket.player import Player
 from golf_bracket.pairing import fold_pair
 from golf_bracket.pairing import bucket_by_record
+from golf_bracket.pairing import round_pairings
 
 def test_first_pairing():
     Players = [Player(name=f"Player{i}", seed=i) for i in range(1, 21)]
@@ -21,3 +22,18 @@ def test_bucketing():
     ps = [Player1, Player2, Player3]
 
     assert bucket_by_record(ps) == {(3,0): [Player1, Player3], (2,1): [Player2]}
+
+def test_round_pairings():
+    
+    Player1 = Player(name="Player1", seed=1, wins=2, losses=0)
+    Player2 = Player(name="Player2", seed=2, wins=2, losses=0)
+    
+    Player3 = Player(name="Player3", seed=3, wins=1, losses=1)
+    Player4 = Player(name="Player4", seed=4, wins=1, losses=1)
+
+    players = [Player1, Player2, Player3, Player4]
+    pairings = round_pairings(players)
+
+    assert len(pairings) == 2
+    assert (Player1, Player2) in pairings
+    assert (Player3, Player4) in pairings

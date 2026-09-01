@@ -23,4 +23,14 @@ def fold_pair(players: list[Player]) -> list[tuple[Player, Player]]:
     second_half_reversed = second_half[::-1]
 
     pairings = list(zip(first_half, second_half_reversed))
+
+    return pairings
+
+def round_pairings(players: list[Player]) -> list[tuple[Player, Player]]:
+    pairings = []
+    bucketed_players = bucket_by_record(players)
+    for bucket in bucketed_players.values():
+        pair = fold_pair(bucket)
+        pairings.extend(pair)
+        
     return pairings
