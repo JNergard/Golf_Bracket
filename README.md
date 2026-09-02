@@ -23,8 +23,17 @@ A Swiss-style, 2-loss-cutoff match play tournament tracker for a 20-person golf 
   number of alive players is odd, always lands on the single best-ranked
   player overall (highest resistance/seed) once the cascade resolves —
   the best player never has to play down a bucket, they just sit out.
-  Not yet implemented (planned for Milestone 7); `pair_round` currently
-  assumes every bucket has an even number of players.
+  Implemented in `round_pairings` (Milestone 7) via `process_bucket`,
+  which threads a "carry" player through buckets ordered worst-to-best.
+- A bye counts as a win (for standings and bucketing purposes), but does
+  *not* get added to the player's opponent history — there's no real
+  opponent, so it shouldn't factor into anyone's Buchholz score. One
+  consequence: since the best player always gets the bye, and a bye win
+  keeps them undefeated and alone at the top, the same player can end up
+  receiving repeated byes over a tournament with a persistently odd
+  number of alive players. Accepted tradeoff, not a bug.
+- The tournament ends when exactly one alive player remains (everyone
+  else has taken 2 losses) — that player is the champion.
 
 ## Project layout
 

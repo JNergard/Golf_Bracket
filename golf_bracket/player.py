@@ -18,7 +18,9 @@ class Player:
             
         else:
             self.losses += 1
-            
+
+    def record_bye(self) -> None:
+        self.wins += 1
 
     @property
     def eliminated(self) -> bool:

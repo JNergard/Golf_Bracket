@@ -22,4 +22,20 @@ class Tournament:
                 alive.append(p)
         return alive
 
+    def record_bye(self, player: Player) -> None:
+        player.record_bye()
+        self.match_history.append((self.round_num, player, None))
+
+    @property
+    def is_over(self) ->  bool:
+        return len(self.alive_players()) == 1
+
+    @property
+    def champion(self) -> Player | None:
+        if self.is_over:
+            return self.alive_players()[0]
+
+        
+
+
     

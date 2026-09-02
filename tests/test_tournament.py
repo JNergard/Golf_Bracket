@@ -33,3 +33,17 @@ def test_alive_players():
     test_tourney = Tournament(players = [Player1, Player2, Player5, Player6])
 
     assert test_tourney.alive_players() == [Player1, Player2]
+
+def test_bye():
+    Player1 = Player(name="Player1", seed=1, wins = 3, losses = 0)
+    test_tourney = Tournament(players = [Player1])
+    test_tourney.record_bye(Player1)
+    assert Player1.opponents == []
+    assert (1, Player1, None) in test_tourney.match_history
+
+def test_tourney_end():
+    Player1 = Player(name="Player1", seed=1, wins = 3, losses = 0)
+    test_tourney = Tournament(players = [Player1])
+    assert test_tourney.is_over == True
+    assert test_tourney.champion == Player1
+
