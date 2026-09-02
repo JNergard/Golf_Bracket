@@ -1,13 +1,19 @@
 """CLI entry point: run the tournament loop (advance rounds, enter results, show standings)."""
-
+import os
+from golf_bracket.persistence import save_tournament, load_tournament
 from golf_bracket.player import Player
 from golf_bracket.tournament import Tournament
 from golf_bracket.pairing import round_pairings
 from golf_bracket.display import print_standings
 
+SAVE_PATH = "data/tournament.json"
+
 def main():
-    players = [Player(name=f"Player{i}", seed=i) for i in range(1, 21)]
-    tournament = Tournament(players=players)
+    if os.path.exists(SAVE_PATH):
+        tournament = load_tournament(SAVE_PATH)
+    else:
+        players = [Player(name=f"Player{i}", seed=i) for i in range(1, 21)]
+        tournament = Tournament(players=players)
 
     while not tournament.is_over:
         pairings, bye = round_pairings(tournament.alive_players())
@@ -24,13 +30,16 @@ def main():
                 print("1 or 2 only")
             if choice == "1":
                 tournament.record_match(winner=player_a, loser = player_b)
+                save_tournament(tournament, SAVE_PATH)
             else:
                 tournament.record_match(winner=player_b, loser = player_a)
+                save_tournament(tournament, SAVE_PATH)
 
 
         if bye is not None:
             print(f"{bye.name} gets the Bye!")
             tournament.record_bye(bye)
+            save_tournament(tournament, SAVE_PATH)
 
         tournament.round_num += 1
         print(print_standings(tournament.players))
