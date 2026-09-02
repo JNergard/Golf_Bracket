@@ -1,8 +1,10 @@
 """Tests for golf_bracket.tournament."""
 from golf_bracket.player import Player
+from golf_bracket.persistence import load_tournament
 
-
+import json
 from golf_bracket.tournament import Tournament
+from golf_bracket.persistence import save_tournament
 
 def test_record_match():
     """Test the record_match function to ensure it correctly updates player records."""
@@ -47,3 +49,38 @@ def test_tourney_end():
     assert test_tourney.is_over == True
     assert test_tourney.champion == Player1
 
+
+def test_json():
+    Player1 = Player(name="Player1", seed=10)
+    Player2 = Player(name="Player2", seed=12)
+    
+    test_tourney = Tournament(players = [Player1, Player2])
+    
+    test_tourney.record_match(winner = Player1, loser = Player2)
+
+    save_tournament(test_tourney, "test.json")
+    with open("test.json") as f:
+        data = json.load(f)
+
+    assert len(data["players"]) == 2
+    assert data["round_num"] == 1
+
+def test_load():
+    Player1 = Player(name="Player1", seed=10)
+    Player2 = Player(name="Player2", seed=12)
+    
+    test_tourney = Tournament(players = [Player1, Player2])
+    
+    test_tourney.record_match(winner = Player1, loser = Player2)
+
+    save_tournament(test_tourney, "test.json")
+    
+    
+    loaded_tourney = load_tournament("test.json")
+
+    loaded_player1 = next(p for p in loaded_tourney.players if p.seed == 10)
+    assert loaded_player1.wins == 1
+    assert loaded_player1.losses == 0
+    assert len(loaded_player1.opponents) == 1
+    assert loaded_player1.opponents[0].seed == 12
+    

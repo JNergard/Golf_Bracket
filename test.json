@@ -1,0 +1,1 @@
+{"round_num": 1, "players": [{"name": "Player1", "seed": 10, "wins": 1, "losses": 0, "opponent_seeds": [12]}, {"name": "Player2", "seed": 12, "wins": 0, "losses": 1, "opponent_seeds": [10]}], "match_history": [{"round_num": 1, "winner_seed": 10, "loser_seed": 12}]}
