@@ -4,6 +4,7 @@ from golf_bracket.pairing import fold_pair
 from golf_bracket.pairing import bucket_by_record
 from golf_bracket.pairing import round_pairings
 from golf_bracket.pairing import resolve_rematches
+from golf_bracket.pairing import process_bucket
 
 def test_first_pairing():
     Players = [Player(name=f"Player{i}", seed=i) for i in range(1, 21)]
@@ -55,3 +56,19 @@ def test_resolve_rematches():
 
     assert (A, C) in pairings
     assert (B, D) in pairings
+
+def test_process_bucket_cascade():
+    Seed1 = Player(name="Seed1", seed=1, wins=7, losses=0)
+    Seed2 = Player(name="Seed2", seed=2, wins=7, losses=0)
+    Seed3 = Player(name="Seed3", seed=3, wins=6, losses=1)
+
+    bottom_pairings, carry = process_bucket([Seed3], None)
+
+    top_pairings, final_carry = process_bucket([Seed1, Seed2], carry)
+
+    assert bottom_pairings == []
+    assert carry == Seed3
+    assert (Seed3, Seed2) in top_pairings
+    assert final_carry == Seed1
+
+    

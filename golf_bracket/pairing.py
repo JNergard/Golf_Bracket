@@ -48,3 +48,26 @@ def round_pairings(players: list[Player]) -> list[tuple[Player, Player]]:
         pairings.extend(pair)
         
     return pairings
+
+def process_bucket(bucket: list[Player], carry: Player | None) -> tuple[list[tuple[Player, Player]], Player | None]:
+    """Processes one bucket in worst-to-best order, absorbing an incoming carry if present, and producign an 
+    outgoing carry if this bucket can't pair evenly."""
+    pool = list(bucket)
+    pairings = []
+
+    if carry is not None:
+        ranked = sorted(pool, key=lambda p: (-p.resistance, p.seed))
+        pairings.append((carry, ranked[-1]))
+        pool.remove(ranked[-1])
+        carry = None
+
+    if len(pool) % 2 == 1:
+        ranked = sorted(pool, key=lambda p: (-p.resistance, p.seed))
+        carry = ranked[-1]
+        pool.remove(ranked[-1])
+
+    pairings.extend(fold_pair(pool)) 
+    return pairings, carry
+
+
+    sorted(buckets.items(), key=lambda win_loss: (win_loss[0][0], -win_loss[0][1]))
