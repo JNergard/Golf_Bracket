@@ -34,11 +34,12 @@ def test_round_pairings():
     Player4 = Player(name="Player4", seed=4, wins=1, losses=1)
 
     players = [Player1, Player2, Player3, Player4]
-    pairings = round_pairings(players)
+    pairings, bye = round_pairings(players)
 
     assert len(pairings) == 2
     assert (Player1, Player2) in pairings
     assert (Player3, Player4) in pairings
+    assert bye == None
 
 def test_resolve_rematches():
     A = Player(name="A", seed = 1)
@@ -70,5 +71,6 @@ def test_process_bucket_cascade():
     assert carry == Seed3
     assert (Seed3, Seed2) in top_pairings
     assert final_carry == Seed1
+
 
     

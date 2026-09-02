@@ -40,15 +40,6 @@ def resolve_rematches(first_half: list[Player], second_half: list[Player]) -> li
     return list(zip(first_half, second_half))
 
 
-def round_pairings(players: list[Player]) -> list[tuple[Player, Player]]:
-    pairings = []
-    bucketed_players = bucket_by_record(players)
-    for bucket in bucketed_players.values():
-        pair = fold_pair(bucket)
-        pairings.extend(pair)
-        
-    return pairings
-
 def process_bucket(bucket: list[Player], carry: Player | None) -> tuple[list[tuple[Player, Player]], Player | None]:
     """Processes one bucket in worst-to-best order, absorbing an incoming carry if present, and producign an 
     outgoing carry if this bucket can't pair evenly."""
@@ -69,5 +60,15 @@ def process_bucket(bucket: list[Player], carry: Player | None) -> tuple[list[tup
     pairings.extend(fold_pair(pool)) 
     return pairings, carry
 
+def round_pairings(players: list[Player]) -> tuple[list[tuple[Player, Player]], Player | None]:
+    buckets = bucket_by_record(players)
+    ordered_buckets = sorted(buckets.items(), key=lambda win_loss: (win_loss[0][0], -win_loss[0][1]))
 
-    sorted(buckets.items(), key=lambda win_loss: (win_loss[0][0], -win_loss[0][1]))
+    pairings = []
+    carry = None
+    for record, bucket in ordered_buckets:
+        processed_pair, carry = process_bucket(bucket, carry)
+        pairings.extend(processed_pair)
+
+    return pairings, carry
+        
