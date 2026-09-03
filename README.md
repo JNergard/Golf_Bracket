@@ -62,3 +62,24 @@ data/             Saved tournament JSON files
 8. Tournament loop / CLI
 9. Bracket/history view
 10. Save/load (JSON)
+11. Flask web app (`app.py`) for the coach, deployed to a free host
+    (Render) with GitHub-API-based persistence instead of local disk
+    (free hosts have ephemeral filesystems)
+
+## Known issue: `app.py` recomputes pairings on every request
+
+`round_pairings(tournament.alive_players())` is called fresh in the `/`
+route every page load, with nothing tracking which matches from the
+*current* round are still pending. Recording one match changes that
+player's bucket immediately, so the next page load computes a different,
+mismatched partial round instead of continuing the same one. `main.py`
+avoids this by computing `pairings` once per round and looping through
+all of them before recomputing.
+
+Fix: persist "pending pairings for the current round" as part of the
+saved `Tournament` state itself (not a Python variable in server memory —
+that would silently break on every Render restart/sleep cycle, the same
+problem the GitHub-API persistence work is meant to solve). Needs a new
+field on `Tournament` plus corresponding `persistence.py` changes.
+Deferred until after the GitHub-API persistence phase, since it touches
+the same save/load code.
