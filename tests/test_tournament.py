@@ -55,8 +55,9 @@ def test_json():
     Player2 = Player(name="Player2", seed=12)
     
     test_tourney = Tournament(players = [Player1, Player2])
-    
+    test_tourney.start_round_if_needed()
     test_tourney.record_match(winner = Player1, loser = Player2)
+    
 
     save_tournament(test_tourney, "test.json")
     with open("test.json") as f:
@@ -64,6 +65,7 @@ def test_json():
 
     assert len(data["players"]) == 2
     assert data["round_num"] == 1
+    assert len(data["pending_pairings"]) == 1
 
 def test_load():
     Player1 = Player(name="Player1", seed=10)
@@ -83,4 +85,15 @@ def test_load():
     assert loaded_player1.losses == 0
     assert len(loaded_player1.opponents) == 1
     assert loaded_player1.opponents[0].seed == 12
+
+def test_start_round_if_needed():
+    Player1 = Player(name="Player1", seed=1, wins = 3, losses = 0)
+    Player2 = Player(name="Player2", seed=2, wins = 3, losses = 0)
+    Player5 = Player(name="Player5", seed=5, wins = 1, losses = 2)
+    Player6 = Player(name="Player6", seed=6, wins = 0, losses = 2)
     
+    test_tourney = Tournament(players = [Player1, Player2, Player5, Player6])
+    test_tourney.start_round_if_needed()
+    first_call_pairings = test_tourney.pending_pairings
+    test_tourney.start_round_if_needed()
+    assert test_tourney.pending_pairings == first_call_pairings

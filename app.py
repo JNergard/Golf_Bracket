@@ -3,7 +3,6 @@ import os
 from golf_bracket.persistence import load_tournament_from_gh, save_tournament_to_github
 from golf_bracket.player import Player
 from golf_bracket.tournament import Tournament
-from golf_bracket.pairing import round_pairings
 from golf_bracket.display import print_standings
 from flask import Flask
 from flask import request
@@ -39,18 +38,35 @@ def record():
     round_loser = players_by_seed[loser_seed]
     tournament.record_match(winner=round_winner,loser=round_loser)
 
+    tournament.pending_pairings = [
+        (a, b) for a, b in tournament.pending_pairings
+        if {a.seed, b.seed} != {winner_seed, loser_seed}
+    ]
+
+    if not tournament.pending_pairings:
+        tournament.round_num += 1
+
     save_tournament_to_github(tournament, OWNER, REPO, PATH, os.environ["GITHUB_TOKEN"])
     return redirect("/")
     
 
 @app.route("/")
 def startTourney():
+    
     tournament = load_or_create_tournament()
 
-    pairings, bye = round_pairings(tournament.alive_players())
+    if tournament.is_over:
+        return f"<h1>Champion: {tournament.champion.name}</h1>"
+    
+    tournament.start_round_if_needed()
+    
+    save_tournament_to_github(tournament, OWNER, REPO, PATH, os.environ["GITHUB_TOKEN"])
+    
+
+    
 
     lines = []
-    for player_a, player_b in pairings:
+    for player_a, player_b in tournament.pending_pairings:
         lines.append(f"""
         <div>
             {player_a.name} vs {player_b.name}

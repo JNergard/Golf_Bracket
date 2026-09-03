@@ -66,20 +66,12 @@ data/             Saved tournament JSON files
     (Render) with GitHub-API-based persistence instead of local disk
     (free hosts have ephemeral filesystems)
 
-## Known issue: `app.py` recomputes pairings on every request
+## Known issue: `process_bucket`'s cross-bucket carry doesn't check rematches
 
-`round_pairings(tournament.alive_players())` is called fresh in the `/`
-route every page load, with nothing tracking which matches from the
-*current* round are still pending. Recording one match changes that
-player's bucket immediately, so the next page load computes a different,
-mismatched partial round instead of continuing the same one. `main.py`
-avoids this by computing `pairings` once per round and looping through
-all of them before recomputing.
-
-Fix: persist "pending pairings for the current round" as part of the
-saved `Tournament` state itself (not a Python variable in server memory —
-that would silently break on every Render restart/sleep cycle, the same
-problem the GitHub-API persistence work is meant to solve). Needs a new
-field on `Tournament` plus corresponding `persistence.py` changes.
-Deferred until after the GitHub-API persistence phase, since it touches
-the same save/load code.
+`fold_pair` avoids rematches *within* a bucket via `resolve_rematches`,
+but `process_bucket`'s "carry" mechanism (pairing an orphaned player
+against the weakest-ranked member of the bucket above, when a bucket
+can't pair internally) never checks whether that specific pairing is a
+rematch. Surfaced by a test where two players who'd just played each
+other ended up in adjacent buckets a round later and got immediately
+re-paired by the cascade. Not fixed yet.

@@ -30,9 +30,11 @@ def tournament_to_dict(tournament: Tournament) -> dict:
         "round_num": tournament.round_num,
         "players": players_data,
         "match_history": history_data,
+        "pending_pairings": [(a.seed, b.seed) for a, b in tournament.pending_pairings]
     }
 
     return data
+
 
 def save_tournament(tournament: Tournament, filepath: str) -> None:
 
@@ -47,6 +49,7 @@ def load_tournament(filepath: str) -> Tournament:
     tourney = dict_to_tournament(data)
     return tourney
 
+
 def dict_to_tournament(data: dict) -> Tournament:
     players = []
     for player_data in data["players"]:
@@ -60,6 +63,10 @@ def dict_to_tournament(data: dict) -> Tournament:
     players_by_seed = {p.seed: p for p in players}
     for player_data, player in zip(data["players"], players):
         player.opponents = [players_by_seed[seed] for seed in player_data["opponent_seeds"]]
+
+    pending_pairings = [
+    (players_by_seed[a_seed], players_by_seed[b_seed])
+    for a_seed, b_seed in data["pending_pairings"]]
     
     match_history = []
     for entry in data["match_history"]:
@@ -68,7 +75,9 @@ def dict_to_tournament(data: dict) -> Tournament:
         loser = players_by_seed[entry["loser_seed"]] if entry["loser_seed"] is not None else None
         match_history.append((entry["round_num"], winner, loser))
     
-    return Tournament(players=players, round_num=data["round_num"], match_history=match_history)
+    return Tournament(players=players, round_num=data["round_num"], match_history=match_history, 
+                      pending_pairings=pending_pairings)
+
 
 def load_tournament_from_gh(owner: str, repo: str, path: str, token: str) -> Tournament:
     url = f"https://api.github.com/repos/{owner}/{repo}/contents/{path}"
@@ -84,6 +93,7 @@ def load_tournament_from_gh(owner: str, repo: str, path: str, token: str) -> Tou
     content_json = base64.b64decode(content_b64).decode()
     tournament = dict_to_tournament(json.loads(content_json))
     return tournament
+
 
 def save_tournament_to_github(tournament: Tournament, owner: str, repo: str, path: str, token: str) -> None:
     url = f"https://api.github.com/repos/{owner}/{repo}/contents/{path}"

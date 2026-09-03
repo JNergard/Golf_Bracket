@@ -1,13 +1,15 @@
 """Tournament orchestration: rounds, elimination, result recording, overall state."""
 from golf_bracket.player import Player
-from golf_bracket.pairing import fold_pair
+from golf_bracket.pairing import fold_pair, round_pairings
 from dataclasses import dataclass, field
+
 
 @dataclass
 class Tournament:
     players: list[Player]
     round_num: int = 1
     match_history: list = field(default_factory=list)
+    pending_pairings: list = field(default_factory=list)
 
     def record_match(self, winner: Player, loser: Player) -> None:
         """Record the result of a match between two players, updating their records accordingly."""
@@ -35,6 +37,13 @@ class Tournament:
         if self.is_over:
             return self.alive_players()[0]
 
+    def start_round_if_needed(self) -> None:
+        if self.pending_pairings or self.is_over:
+            return
+        pairings, bye = round_pairings(self.alive_players())
+        if bye is not None:
+            self.record_bye(bye)
+        self.pending_pairings = pairings
         
 
 
