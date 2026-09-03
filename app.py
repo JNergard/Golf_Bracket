@@ -74,9 +74,10 @@ PAGE_STYLE = """
   }
   header h1 {
     margin: 0;
-    font-size: 1.3rem;
+    font-size: 1.05rem;
+    line-height: 1.3;
     font-weight: 600;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.01em;
   }
   header p {
     margin: 0.25rem 0 0;
@@ -185,7 +186,7 @@ PAGE_STYLE = """
   tbody tr:nth-child(even) {
     background: #f0f1ee;
   }
-  tbody tr:first-child td {
+  tbody tr:first-child td:first-child {
     border-left: 3px solid var(--gold);
   }
   .danger-zone {
@@ -264,7 +265,7 @@ def render_page(body: str) -> str:
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Golf Bracket</title>
+<title>Antelope National Match Play Invitational</title>
 {PAGE_STYLE}
 </head>
 <body>
@@ -294,14 +295,14 @@ def standings_table_html(tournament: Tournament) -> str:
 
 def setup_form_html() -> str:
     return """
-    <header><h1>Golf Bracket</h1></header>
+    <header><h1>Antelope National Match Play Invitational</h1></header>
     <section class="setup">
       <h2>Set Up Tournament</h2>
       <p class="hint">Enter each player's name, one per line. The order
       you list them in sets their seed for round 1 (first line plays
       last line, second line plays second-to-last, and so on).</p>
       <form method="post" action="/setup">
-        <textarea name="player_names" placeholder="Alice&#10;Bob&#10;Carol&#10;..."></textarea>
+        <textarea name="player_names" placeholder="Johnny&#10;Bella&#10;Bobby&#10;..."></textarea>
         <button type="submit">Start Tournament</button>
       </form>
     </section>
@@ -357,7 +358,7 @@ def startTourney():
 
     if tournament.is_over:
         body = f"""
-        <header><h1>Golf Bracket</h1></header>
+        <header><h1>Antelope National Match Play Invitational</h1></header>
         <div class="champion">
           <div class="trophy-line"></div>
           <h1>Champion</h1>
@@ -402,7 +403,7 @@ def startTourney():
 
     body = f"""
     <header>
-      <h1>Golf Bracket</h1>
+      <h1>Antelope National Match Play Invitational</h1>
       <p>Round {tournament.round_num}</p>
     </header>
     <section>
