@@ -48,8 +48,13 @@ def process_bucket(bucket: list[Player], carry: Player | None) -> tuple[list[tup
 
     if carry is not None:
         ranked = sorted(pool, key=lambda p: (-p.resistance, p.seed))
-        pairings.append((carry, ranked[-1]))
-        pool.remove(ranked[-1])
+        opponent_for_carry = ranked[-1]  # fallback: accept a rematch if nothing else works
+        for candidate in reversed(ranked):
+            if candidate not in carry.opponents:
+                opponent_for_carry = candidate
+                break
+        pairings.append((carry, opponent_for_carry))
+        pool.remove(opponent_for_carry)
         carry = None
 
     if len(pool) % 2 == 1:

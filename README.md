@@ -66,12 +66,9 @@ data/             Saved tournament JSON files
     (Render) with GitHub-API-based persistence instead of local disk
     (free hosts have ephemeral filesystems)
 
-## Known issue: `process_bucket`'s cross-bucket carry doesn't check rematches
-
-`fold_pair` avoids rematches *within* a bucket via `resolve_rematches`,
-but `process_bucket`'s "carry" mechanism (pairing an orphaned player
-against the weakest-ranked member of the bucket above, when a bucket
-can't pair internally) never checks whether that specific pairing is a
-rematch. Surfaced by a test where two players who'd just played each
-other ended up in adjacent buckets a round later and got immediately
-re-paired by the cascade. Not fixed yet.
+- `process_bucket`'s cross-bucket "carry" pairing also avoids rematches
+  now, same idea as `resolve_rematches`: when absorbing an incoming
+  carry, it searches from the worst-ranked player in the bucket upward
+  for the first one who hasn't already played the carry, falling back
+  to the original worst-ranked player (accepting the rematch) if nobody
+  in the bucket is safe.

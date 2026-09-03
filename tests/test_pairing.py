@@ -72,5 +72,30 @@ def test_process_bucket_cascade():
     assert (Seed3, Seed2) in top_pairings
     assert final_carry == Seed1
 
+def test_process_bucket_carry_avoids_rematch():
+    Player1 = Player(name="Player1", seed=1)
+    Player2 = Player(name="Player2", seed=2)
+    Player3 = Player(name="Player3", seed=3)
+
+    Player2.add_opponent(Player3)
+    Player3.add_opponent(Player2)
+
+    pairings, carry = process_bucket([Player1, Player2], Player3)
+
+    assert (Player3, Player1) in pairings
+    assert carry == Player2
+
+def test_process_bucket_carry_accepts_rematch_if_no_alternative():
+    Player2 = Player(name="Player2", seed=2)
+    Player3 = Player(name="Player3", seed=3)
+
+    Player2.add_opponent(Player3)
+    Player3.add_opponent(Player2)
+
+    pairings, carry = process_bucket([Player2], Player3)
+
+    assert (Player3, Player2) in pairings
+    assert carry is None
+
 
     
