@@ -24,6 +24,21 @@ def load_or_create_tournament() -> Tournament:
     except requests.exceptions.HTTPError:
         players = [Player(name=f"Player{i}", seed=i) for i in range(1, 21)]
         return Tournament(players=players)
+    
+
+@app.route("/restart_tournament", methods=["POST"])
+def restartTourney():
+    tournament = load_or_create_tournament()
+    tournament.restart_tournament()
+    save_tournament_to_github(tournament, OWNER, REPO, PATH, os.environ["GITHUB_TOKEN"])
+    return redirect("/")
+
+@app.route("/restart_round", methods=["POST"])
+def restartRound():
+    tournament = load_or_create_tournament()
+    tournament.restart_round()
+    save_tournament_to_github(tournament, OWNER, REPO, PATH, os.environ["GITHUB_TOKEN"])
+    return redirect("/")
 
     
 @app.route("/record", methods=["POST"])
@@ -62,7 +77,14 @@ def startTourney():
     
     save_tournament_to_github(tournament, OWNER, REPO, PATH, os.environ["GITHUB_TOKEN"])
     
-
+    buttons_html = """
+    <form method="post" action="/restart_round">
+        <button type="submit">Restart Round</button>
+    </form>
+    <form method="post" action="/restart_tournament">
+        <button type="submit">Restart Tournament</button>
+    </form>
+    """
     
 
     lines = []
@@ -84,7 +106,8 @@ def startTourney():
         """)
     pairing_text = "\n".join(lines)
 
-    return f"<pre>{print_standings(tournament.players)}</pre>{pairing_text}"
+
+    return f"<pre>{print_standings(tournament.players)}</pre>{pairing_text}{buttons_html}"
    
 
 if __name__ == "__main__":

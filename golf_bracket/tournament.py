@@ -44,7 +44,26 @@ class Tournament:
         if bye is not None:
             self.record_bye(bye)
         self.pending_pairings = pairings
-        
 
+    def restart_tournament(self) -> None:
+        for player in self.players:
+            player.wins = 0
+            player.losses = 0
+            player.opponents = []
+        self.round_num = 1
+        self.match_history = []
+        self.pending_pairings = []
+
+    def restart_round(self) -> None:
+        current_round = [entry for entry in self.match_history if entry[0] == self.round_num]
+        for round_num, winner, loser in current_round:
+            winner.wins -= 1
+            if loser is not None:
+                loser.losses -= 1
+                winner.opponents.remove(loser)
+                loser.opponents.remove(winner)
+
+        self.match_history = [entry for entry in self.match_history if entry[0] != self.round_num]
+        self.pending_pairings = []
 
     

@@ -97,3 +97,51 @@ def test_start_round_if_needed():
     first_call_pairings = test_tourney.pending_pairings
     test_tourney.start_round_if_needed()
     assert test_tourney.pending_pairings == first_call_pairings
+
+def test_restart_tournament():
+    Player1 = Player(name="Player1", seed=1, wins=3, losses=0)
+    Player2 = Player(name="Player2", seed=2, wins=0, losses=2)
+
+    test_tourney = Tournament(players=[Player1, Player2], round_num=3,
+                               match_history=[(2, Player1, Player2)],
+                               pending_pairings=[(Player1, Player2)])
+
+    test_tourney.restart_tournament()
+
+    assert Player1.wins == 0
+    assert Player1.losses == 0
+    assert Player1.opponents == []
+
+    assert Player2.wins == 0
+    assert Player2.losses == 0
+    assert Player2.opponents == []
+
+    assert test_tourney.round_num == 1
+    assert test_tourney.match_history == []
+    assert test_tourney.pending_pairings == []
+
+def test_restart_round():
+    Player1 = Player(name="Player1", seed=1)
+    Player2 = Player(name="Player2", seed=2)
+    Player3 = Player(name="Player3", seed=3)
+
+    test_tourney = Tournament(players=[Player1, Player2, Player3])
+    test_tourney.record_match(winner=Player1, loser=Player2)
+    test_tourney.record_bye(Player3)
+    test_tourney.pending_pairings = []
+
+    test_tourney.restart_round()
+
+    assert Player1.wins == 0
+    assert Player1.losses == 0
+    assert Player1.opponents == []
+
+    assert Player2.wins == 0
+    assert Player2.losses == 0
+    assert Player2.opponents == []
+
+    assert Player3.wins == 0
+    assert Player3.opponents == []
+
+    assert test_tourney.match_history == []
+    assert test_tourney.pending_pairings == []
